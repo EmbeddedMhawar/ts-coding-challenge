@@ -15,7 +15,7 @@ import assert from "node:assert";
 
 // Pre-configured client for test network (testnet).
 const client = Client.forTestnet();
-client.setMirrorNetwork(["hcs.testnet.mirrornode.hedera.com:5600"]);
+client.setMirrorNetwork(["testnet.mirrornode.hedera.com:443"]);
 
 // Helper function to get accounts with balance > specified HBARs.
 const getAccountsAboveThreshold = async (expectedBalance: number) => {
@@ -92,19 +92,16 @@ When(/^The message "([^"]*)" is published to the topic$/, async function (messag
   assert.ok(getMessage?.toString() === message, "Message to be sent is not the same as the message configured");
 });
 
-Then(/^The message "([^"]*)" is received by the topic and can be printed to the console$/, function (message: string) {
+Then(/^The message "([^"]*)" is received by the topic and can be printed to the console$/,{ timeout: 10000 }, async function (message: string) {
+  await new Promise((resolve)=> setTimeout(resolve,5000));
   console.log("\nSubscribing to topic ID:", this.topicId.toString());
   new TopicMessageQuery()
     .setTopicId(this.topicId)
     .subscribe(client,
       (msg) => {
-        if (msg?.contents) {
-          const receivedMessage = msg.contents.toString();
+          const receivedMessage = msg?.contents.toString();
           assert.ok(receivedMessage === message, "Message received is not the same as the message sent");
           console.log(`Received message: ${receivedMessage}`);
-        } else {
-          console.log("Received message is undefined");
-        }
       },
       (error) => console.log(`Error: ${error.toString()}`)
     );
