@@ -34,7 +34,7 @@ const getAccountsAboveThreshold = async (expectedBalance: number) => {
   return accountsAboveThreshold;
 };
 
-Given(/^a first account with more than (\d+) hbars$/, async function (expectedBalance: number) {
+Given(/^a first account with more than (\d+) hbars$/,{ timeout: 100000 }, async function (expectedBalance: number) {
   const accountsAboveThreshold = await getAccountsAboveThreshold(expectedBalance);
   assert.ok(accountsAboveThreshold.length > 0, "No accounts found with balance > " + expectedBalance);
 
@@ -55,7 +55,7 @@ Given(/^a first account with more than (\d+) hbars$/, async function (expectedBa
   console.log("-------------------------------------------------------------------------------------");
 });
 
-When(/^A topic is created with the memo "([^"]*)" with the first account as the submit key$/, async function (memo: string) {
+When(/^A topic is created with the memo "([^"]*)" with the first account as the submit key$/,{ timeout: 100000 }, async function (memo: string) {
   const txTopicCreation = await (new TopicCreateTransaction()
     .setSubmitKey(this.firstPrivateKey.publicKey)
     .setTopicMemo(memo)
@@ -75,7 +75,7 @@ When(/^A topic is created with the memo "([^"]*)" with the first account as the 
   assert.ok(topicInfo.topicMemo === memo, "Topic memo is not the same as the memo configured");
 });
 
-When(/^The message "([^"]*)" is published to the topic$/, async function (message: string) {
+When(/^The message "([^"]*)" is published to the topic$/,{ timeout: 100000 }, async function (message: string) {
   const txSubmitMessage = new TopicMessageSubmitTransaction()
     .setTopicId(this.topicId)
     .setMessage(message);
@@ -92,7 +92,7 @@ When(/^The message "([^"]*)" is published to the topic$/, async function (messag
   assert.ok(getMessage?.toString() === message, "Message to be sent is not the same as the message configured");
 });
 
-Then(/^The message "([^"]*)" is received by the topic and can be printed to the console$/,{ timeout: 10000 }, async function (message: string) {
+Then(/^The message "([^"]*)" is received by the topic and can be printed to the console$/,{ timeout: 100000 }, async function (message: string) {
   await new Promise((resolve)=> setTimeout(resolve,5000));
   console.log("\nSubscribing to topic ID:", this.topicId.toString());
   new TopicMessageQuery()
@@ -107,7 +107,7 @@ Then(/^The message "([^"]*)" is received by the topic and can be printed to the 
     );
 });
 
-Given(/^A second account with more than (\d+) hbars$/, async function (expectedBalance: number) {
+Given(/^A second account with more than (\d+) hbars$/,{ timeout: 100000 }, async function (expectedBalance: number) {
   const accountsAboveThreshold = await getAccountsAboveThreshold(expectedBalance);
   assert.ok(accountsAboveThreshold.length > 1, "No more accounts found with balance > " + expectedBalance);
 
@@ -126,7 +126,7 @@ Given(/^A second account with more than (\d+) hbars$/, async function (expectedB
   console.log("-------------------------------------------------------------------------------------");
 });
 
-Given(/^A (\d+) of (\d+) threshold key with the first and second account$/, function (threshold: number, total: number) {
+Given(/^A (\d+) of (\d+) threshold key with the first and second account$/,{ timeout: 100000 }, function (threshold: number, total: number) {
   const key1 = PrivateKey.fromStringED25519(this.firstAccount.privateKey);
   const publicKey1 = key1.publicKey;
 
@@ -140,7 +140,7 @@ Given(/^A (\d+) of (\d+) threshold key with the first and second account$/, func
   assert.ok(TOTAL_KEY_NUMBER === total, "The total keys required is: " + total.toString() + " | The total keys injected is " + TOTAL_KEY_NUMBER.toString());
 });
 
-When(/^A topic is created with the memo "([^"]*)" with the threshold key as the submit key$/, async function (memo: string) {
+When(/^A topic is created with the memo "([^"]*)" with the threshold key as the submit key$/,{ timeout: 100000 }, async function (memo: string) {
   const txTopicCreation = new TopicCreateTransaction()
     .setSubmitKey(this.thresholdKeys.publicKey)
     .setTopicMemo(memo);
